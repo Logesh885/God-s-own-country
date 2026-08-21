@@ -1,4 +1,4 @@
--- SQL schema for Misty Munnar Tours
+-- SQL schema for Misty Munnar Tours (updated)
 
 CREATE TABLE IF NOT EXISTS admins (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -10,15 +10,27 @@ CREATE TABLE IF NOT EXISTS admins (
 CREATE TABLE IF NOT EXISTS packages (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) NOT NULL UNIQUE,
   short_desc TEXT,
   description TEXT,
   price DECIMAL(10,2) DEFAULT 0,
+  package_image VARCHAR(500) DEFAULT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS package_images (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  package_id INT NOT NULL,
+  path VARCHAR(500) NOT NULL,
+  is_primary TINYINT(1) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS bookings (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(200),
+  email VARCHAR(255),
   phone VARCHAR(50),
   travel_date DATE,
   people INT,
@@ -44,7 +56,6 @@ CREATE TABLE IF NOT EXISTS gallery (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- New table to store WhatsApp-sent booking analytics
 CREATE TABLE IF NOT EXISTS wa_bookings (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(200),
