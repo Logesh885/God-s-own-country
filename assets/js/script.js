@@ -35,6 +35,13 @@ function buildPrefillMessage({name, phone, travel_date, people, package_name, re
   return message.replace(/\s+/g, ' ').trim();
 }
 
+function sendWaAnalytics(data){
+  // fire-and-forget POST to record the WA-sent booking for analytics
+  try{
+    fetch('/api/wa_booking.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});
+  }catch(e){/* ignore */}
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
   // populate whatsapp links
   document.querySelectorAll('#whatsapp-link, #wa-float').forEach(a=>{a.setAttribute('href', waUrl('Hi Misty Munnar Tours')); a.setAttribute('target','_blank')});
@@ -58,7 +65,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelectorAll('.btn-wa').forEach(btn=>{
       btn.addEventListener('click', (e)=>{
         const title = btn.dataset.title || '';
+        const pkgId = btn.dataset.id ? parseInt(btn.dataset.id,10) : 0;
         const message = buildPrefillMessage({package_name: title});
+        // record analytics
+        sendWaAnalytics({name:'', phone:'', travel_date:'', people:0, package_id:pkgId, package_name:title, requirements:'', source:'package_button'});
         window.open(waUrl(message), '_blank');
       });
     });
@@ -95,7 +105,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const people = document.getElementById('bf-people').value;
     const requirements = document.getElementById('bf-req').value.trim();
     const packageSel = document.getElementById('package-select');
+    const package_id = packageSel.value ? parseInt(packageSel.value,10) : 0;
     const package_name = packageSel.options[packageSel.selectedIndex]?.text || '';
+    // record analytics (do not block)
+    sendWaAnalytics({name, phone, travel_date, people: parseInt(people||0,10), package_id, package_name, requirements, source:'booking_form'});
     const message = buildPrefillMessage({name, phone, travel_date, people, package_name, requirements});
     window.open(waUrl(message), '_blank');
   });

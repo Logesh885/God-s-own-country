@@ -44,5 +44,23 @@ CREATE TABLE IF NOT EXISTS gallery (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- New table to store WhatsApp-sent booking analytics
+CREATE TABLE IF NOT EXISTS wa_bookings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(200),
+  phone VARCHAR(50),
+  travel_date DATE,
+  people INT,
+  package_id INT,
+  package_name VARCHAR(255),
+  requirements TEXT,
+  source VARCHAR(100),
+  user_agent VARCHAR(1000),
+  ip VARCHAR(100),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (package_id),
+  INDEX (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Example admin insert statement. Replace {HASH} with a value from PHP password_hash('yourpassword', PASSWORD_DEFAULT)
 -- INSERT INTO admins (username, password_hash) VALUES ('admin', '{HASH}');
