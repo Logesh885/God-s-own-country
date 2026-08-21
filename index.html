@@ -103,13 +103,16 @@
         <div class="grid-contact">
           <form id="booking-form" class="glass form" method="post" action="/api/booking.php">
             <h4>Book a Tour</h4>
-            <label>Name<input name="name" required></label>
-            <label>Phone<input name="phone" required></label>
-            <label>Travel Date<input type="date" name="travel_date" required></label>
-            <label>People<input type="number" name="people" min="1" required></label>
+            <label>Name<input name="name" id="bf-name" required></label>
+            <label>Phone<input name="phone" id="bf-phone" required></label>
+            <label>Travel Date<input type="date" name="travel_date" id="bf-date" required></label>
+            <label>People<input type="number" name="people" id="bf-people" min="1" required></label>
             <label>Package<select name="package_id" id="package-select"></select></label>
-            <label>Additional Requirements<textarea name="requirements"></textarea></label>
-            <button class="btn" type="submit">Submit Booking</button>
+            <label>Additional Requirements<textarea name="requirements" id="bf-req"></textarea></label>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn" type="submit">Submit Booking</button>
+              <button type="button" id="booking-wa-btn" class="btn btn-alt">Book on WhatsApp</button>
+            </div>
           </form>
 
           <div class="glass contact-card">
