@@ -6,21 +6,33 @@ function waUrl(message){
   return `https://wa.me/${config.whatsappNumber}?text=${text}`;
 }
 
-function buildPrefillMessage({name, phone, travel_date, people, package_name}){
-  // Default template, omit empty parts
-  const parts = [];
-  parts.push('Hi Misty Munnar Tours,');
-  if(package_name) parts.push(`I would like to book the ${package_name} package`);
-  if(travel_date) parts.push(`on ${travel_date}`);
-  if(people) parts.push(`for ${people} people`);
-  let body = parts.join(' ');
-  const contactParts = [];
+function buildPrefillMessage({name, phone, travel_date, people, package_name, requirements}){
+  // Default friendly template with placeholders:
+  // "Hi Misty Munnar Tours, I want to book the {package} package on {date} for {people} people. My name is {name} and my phone number is {phone}. Additional requirements: {requirements}"
+  // Omit segments when values are empty so the message reads naturally.
+
+  const greeting = 'Hi Misty Munnar Tours';
+  let message = greeting;
+
+  // booking segment
+  let bookingParts = [];
+  if(package_name) bookingParts.push(`I want to book the ${package_name} package`);
+  if(travel_date) bookingParts.push(`on ${travel_date}`);
+  if(people) bookingParts.push(`for ${people} people`);
+  if(bookingParts.length) message += ', ' + bookingParts.join(' ');
+  message += '.';
+
+  // contact segment
+  let contactParts = [];
   if(name) contactParts.push(`My name is ${name}`);
   if(phone) contactParts.push(`my phone number is ${phone}`);
-  if(contactParts.length) body = `${body}. ${contactParts.join(' and ')}.`;
-  // If only header then add a short greeting
-  if(body.trim() === 'Hi Misty Munnar Tours,') body = 'Hi Misty Munnar Tours';
-  return body;
+  if(contactParts.length) message += ' ' + contactParts.join(' and ') + '.';
+
+  // requirements
+  if(requirements) message += ' Additional requirements: ' + requirements;
+
+  // Cleanup: replace any double spaces and trim
+  return message.replace(/\s+/g, ' ').trim();
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -81,9 +93,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const phone = document.getElementById('bf-phone').value.trim();
     const travel_date = document.getElementById('bf-date').value;
     const people = document.getElementById('bf-people').value;
+    const requirements = document.getElementById('bf-req').value.trim();
     const packageSel = document.getElementById('package-select');
     const package_name = packageSel.options[packageSel.selectedIndex]?.text || '';
-    const message = buildPrefillMessage({name, phone, travel_date, people, package_name});
+    const message = buildPrefillMessage({name, phone, travel_date, people, package_name, requirements});
     window.open(waUrl(message), '_blank');
   });
 
