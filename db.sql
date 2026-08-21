@@ -1,0 +1,48 @@
+-- SQL schema for Misty Munnar Tours
+
+CREATE TABLE IF NOT EXISTS admins (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS packages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  short_desc TEXT,
+  description TEXT,
+  price DECIMAL(10,2) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(200),
+  phone VARCHAR(50),
+  travel_date DATE,
+  people INT,
+  package_id INT,
+  requirements TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS enquiries (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(200),
+  email VARCHAR(200),
+  phone VARCHAR(50),
+  message TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS gallery (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  path VARCHAR(500),
+  alt VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Example admin insert statement. Replace {HASH} with a value from PHP password_hash('yourpassword', PASSWORD_DEFAULT)
+-- INSERT INTO admins (username, password_hash) VALUES ('admin', '{HASH}');
